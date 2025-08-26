@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OptiDesk Web — Tickets</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="assets/icon.svg" alt="" width="22" height="22">
+      <span>OptiDesk Web</span>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn" data-view="dashboard">Dashboard</button>
+      <button class="nav-btn" data-view="novo">Novo Ticket</button>
+      <button class="nav-btn" data-view="lista">Lista</button>
+      <button class="nav-btn" data-view="relatorios">Relatórios</button>
+    </nav>
+  </header>
+
+  <main id="app">
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view hidden">
+      <h1>Resumo</h1>
+      <div class="kpis">
+        <div class="kpi"><div class="kpi-title">Total</div><div class="kpi-value" id="kpi-total">0</div></div>
+        <div class="kpi"><div class="kpi-title">Abertos</div><div class="kpi-value" id="kpi-abertos">0</div></div>
+        <div class="kpi"><div class="kpi-title">Resolvidos</div><div class="kpi-value" id="kpi-resolvidos">0</div></div>
+        <div class="kpi"><div class="kpi-title">Tempo médio</div><div class="kpi-value" id="kpi-tmedio">--:--</div></div>
+      </div>
+      <div class="actions">
+        <button class="primary" data-view="novo">+ Novo Ticket</button>
+        <button data-view="lista">Ver lista</button>
+        <button id="btn-print">Imprimir relatório</button>
+      </div>
+    </section>
+
+    <!-- NOVO TICKET -->
+    <section id="view-novo" class="view hidden">
+      <h1>Novo Ticket</h1>
+      <form id="form-novo" class="card">
+        <div class="grid">
+          <label>Título <input required name="titulo" placeholder="Ex.: Usuário sem acesso ao Protheus"></label>
+          <label>Responsável <input name="responsavel" placeholder="Ex.: Ana Carolina" value="Ana Carolina"></label>
+          <label>Grupo
+            <select name="grupo">
+              <option>TI - Protheus</option>
+              <option>Infraestrutura</option>
+              <option>Suporte Geral</option>
+              <option>Outros</option>
+            </select>
+          </label>
+          <label>Prioridade
+            <select name="prioridade">
+              <option>Baixa</option>
+              <option>Média</option>
+              <option>Alta</option>
+              <option>Urgente</option>
+            </select>
+          </label>
+          <label>Status
+            <select name="status">
+              <option>Aberto</option>
+              <option>Em andamento</option>
+              <option>Resolvido</option>
+            </select>
+          </label>
+          <label>Aberto em
+            <input name="abertura" type="datetime-local">
+          </label>
+          <label>Fechado em (opcional)
+            <input name="fechamento" type="datetime-local">
+          </label>
+        </div>
+        <label>Descrição
+          <textarea name="descricao" rows="4" placeholder="Descreva o problema..."></textarea>
+        </label>
+        <div class="right">
+          <button type="submit" class="primary">Salvar</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- LISTA -->
+    <section id="view-lista" class="view hidden">
+      <h1>Tickets</h1>
+      <div class="filters card">
+        <input id="f-texto" placeholder="Busca (título/descrição)">
+        <select id="f-status">
+          <option value="">Status</option>
+          <option>Aberto</option>
+          <option>Em andamento</option>
+          <option>Resolvido</option>
+        </select>
+        <select id="f-prioridade">
+          <option value="">Prioridade</option>
+          <option>Baixa</option>
+          <option>Média</option>
+          <option>Alta</option>
+          <option>Urgente</option>
+        </select>
+        <input id="f-de" type="date">
+        <input id="f-ate" type="date">
+        <input id="f-responsavel" placeholder="Responsável">
+        <select id="f-grupo">
+          <option value="">Grupo</option>
+          <option>TI - Protheus</option>
+          <option>Infraestrutura</option>
+          <option>Suporte Geral</option>
+          <option>Outros</option>
+        </select>
+        <button id="btn-export">Exportar CSV</button>
+      </div>
+
+      <table class="table" id="table-tickets">
+        <thead>
+          <tr>
+            <th>ID</th><th>Título</th><th>Prioridade</th><th>Status</th><th>Abertura</th><th>Fechamento</th><th>Tempo</th><th>Responsável</th><th>Grupo</th><th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- RELATÓRIOS -->
+    <section id="view-relatorios" class="view hidden">
+      <h1>Relatórios</h1>
+      <div class="card">
+        <div class="grid">
+          <label>De <input id="r-de" type="date"></label>
+          <label>Até <input id="r-ate" type="date"></label>
+          <label>Status
+            <select id="r-status">
+              <option value="">Todos</option>
+              <option>Aberto</option>
+              <option>Em andamento</option>
+              <option>Resolvido</option>
+            </select>
+          </label>
+          <label>Prioridade
+            <select id="r-prioridade">
+              <option value="">Todas</option>
+              <option>Baixa</option>
+              <option>Média</option>
+              <option>Alta</option>
+              <option>Urgente</option>
+            </select>
+          </label>
+        </div>
+        <div class="kpis" id="rel-kpis"></div>
+        <div class="right">
+          <button id="btn-print2">Imprimir</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODAL DETALHE -->
+    <dialog id="modal">
+      <form method="dialog" class="modal card">
+        <h3 id="m-title">Ticket</h3>
+        <div id="m-body"></div>
+        <menu class="right">
+          <button value="close">Fechar</button>
+        </menu>
+      </form>
+    </dialog>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
